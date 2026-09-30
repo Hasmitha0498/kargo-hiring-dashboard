@@ -1,0 +1,18 @@
+Priya Raman
+priya.raman.work@example.com | +91 99887 76655 | Pune, Maharashtra
+linkedin.com/in/priyaraman-pm | priyaraman.dev/portfolio
+
+SUMMARY
+Product manager with a background in warehouse operations. Priya has owned inventory tooling end to end.
+
+EXPERIENCE
+Product Manager | Stockline Systems | 2022 – Present
+- Spent six weeks on warehouse floors shadowing pickers before writing the first spec for cycle counting
+- Killed a barcode feature after two weeks of low usage and moved the team to exception alerts, which cut mis-picks by 18%
+- Wrote the incident review after a sync outage and owned every follow-up item to closure
+
+Operations Associate | Fastmove Logistics | 2019 – 2022
+- Built a dock scheduling sheet nobody asked for; adopted by three shift leads within a month
+
+EDUCATION
+B.Com | Some University | 2016 – 2019

@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+
+# Secrets: never commit
+.env
+.env.local
+.env*.local
+!.env.example
+.vercel
+
+# Historical hire files (personal data, calibration input only)
+calibration-data/
