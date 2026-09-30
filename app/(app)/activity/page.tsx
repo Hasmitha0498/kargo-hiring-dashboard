@@ -1,3 +1,4 @@
+import { formatDateTime } from '@/lib/format';
 import Link from 'next/link';
 import { listActivity, listCandidates, listPrivate } from '@/lib/db/repo';
 import { displayName } from '@/lib/views';
@@ -65,7 +66,7 @@ export default async function ActivityPage() {
             )}
             {events.map((e) => (
               <tr key={e.id} className="border-t border-line align-top">
-                <td className="whitespace-nowrap px-3 py-2 text-xs text-slate-500">{new Date(e.created_at).toLocaleString()}</td>
+                <td className="whitespace-nowrap px-3 py-2 text-xs text-slate-500">{formatDateTime(e.created_at)}</td>
                 <td className="px-3 py-2 font-medium text-slate-800">{LABEL[e.event_type] ?? e.event_type}</td>
                 <td className="px-3 py-2">
                   {e.candidate_id && name(e.candidate_id) ? (

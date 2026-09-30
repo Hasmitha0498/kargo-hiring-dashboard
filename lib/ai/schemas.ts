@@ -81,7 +81,9 @@ const email = z.object({
   body: z.string().trim().min(80).max(2500),
 });
 
-export const outputsSchema = z
+/** Built per candidate so the candidate-facing emails can also be checked for the rubric's own criterion names. */
+export function outputsSchemaFor(criterionNames: string[]) {
+  return z
   .object({
     why_ranked: z.string().trim().min(20).max(600),
     uncertainty: z.string().trim().min(20).max(500),
@@ -95,9 +97,14 @@ export const outputsSchema = z
       const leak = `${e.subject}\n${e.body}`.match(INTERNAL_LEAK);
       if (leak) ctx.addIssue({ code: 'custom', path: [name], message: `must not mention internal evaluation details (found "${leak[0]}")` });
       if (/\[[^\]]*\]/.test(e.body.replace(/\[Candidate\]/g, ''))) ctx.addIssue({ code: 'custom', path: [name, 'body'], message: 'must not contain bracketed placeholders other than {{first_name}}' });
+      const text = `${e.subject}\n${e.body}`.toLowerCase();
+      const named = criterionNames.find((n) => n.trim().length > 3 && text.includes(n.toLowerCase()));
+      if (named) ctx.addIssue({ code: 'custom', path: [name], message: `must not use internal evaluation vocabulary such as "${named}"; describe what the candidate did in plain words` });
     }
     if (!o.interview_probe.includes('?')) ctx.addIssue({ code: 'custom', path: ['interview_probe'], message: 'must be a question' });
   });
+}
+export const outputsSchema = outputsSchemaFor([]);
 export type OutputsResult = z.infer<typeof outputsSchema>;
 
 const emailJson = {

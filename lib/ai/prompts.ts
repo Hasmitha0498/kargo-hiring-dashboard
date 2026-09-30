@@ -3,8 +3,8 @@
 // builders below do not accept it as input.
 import { ROLE_LABEL, SCORE_SCALE, type Criterion, type Role } from '../domain';
 
-export const EVALUATION_PROMPT_VERSION = 'eval-v1';
-export const OUTPUTS_PROMPT_VERSION = 'outputs-v1';
+export const EVALUATION_PROMPT_VERSION = 'eval-v2';
+export const OUTPUTS_PROMPT_VERSION = 'outputs-v2';
 export const CALIBRATION_PROMPT_VERSION = 'calibration-v1';
 
 const scale = SCORE_SCALE.map((s) => `${s.score} = ${s.label}`).join('\n');
@@ -31,6 +31,9 @@ Rules:
 12. Give concise evidence and reasoning for every score. Evidence must be verbatim excerpts copied from the CV (join several with " … "). Reasoning is one or two sentences linking that evidence to the score level.
 13. Return structured JSON only, containing every criterion of both rubrics exactly once, using the criterion keys given.
 14. The human makes the final hiring decision.
+15. Judge each criterion only against its own definition. The same CV line may be evidence for several criteria; do not withhold credit because the evidence was already used elsewhere.
+16. Examples inside a criterion ("e.g. ...") illustrate the kind of evidence; they are not required. Credit equivalent evidence in any form or industry.
+17. When torn between two levels, give the lower level unless every part of the higher level's definition is met by the quoted evidence.
 
 Writing quality, confident tone or self-description ("strategic", "passionate", "results-driven") is not evidence. Look for what the person observably did, what they owned, and what changed as a result.
 The text "[Candidate]" stands in for the person's name, which has been removed. "[redacted]" marks removed contact details.
@@ -92,7 +95,7 @@ Part 2, two email drafts written as the founder (first person, warm, concise, hu
 - rejection: a warm, respectful decline. Thank them sincerely and close the door kindly without false promises.
 Both emails:
 - Start with "Hi {{first_name}}," exactly. Use the literal placeholder {{first_name}}; the application inserts the real name later. Use no other placeholders or brackets.
-- Mention one or two specific, genuine things from their professional background (from the evidence) so it does not read as a template. Never quote internal evaluation language.
+- Mention one or two specific, genuine things from their professional background (from the evidence) so it does not read as a template. Describe what they did in plain words; never use the criterion names or any internal evaluation vocabulary.
 - Never mention scores, numbers out of 100, rankings, shortlists, rubrics, criteria, AI or any automated evaluation, and never state internal reasons or weaknesses.
 - Do not invent facts about the company, salary, dates, or next steps beyond what is described here.
 - Sign off with the sender's name, title and company exactly as given.
@@ -134,6 +137,7 @@ Constraints for patterns and criteria:
 - Do NOT base anything only on years of experience, job title, college, employer prestige, age, gender, location, certifications, or keywords the JDs already explicitly demand.
 - Every pattern must be observable in CV text (what the person did, owned, changed, and what happened as a result) and supported by several higher performers while weaker or absent in the others. Be honest about counter-examples.
 - Criteria must be generic and reusable: never mention any past hire, their employers, or their specific projects inside criterion names, descriptions, evidence definitions or scoring guidance. You may cite hires only by label inside calibration_rationale.
+- Describe the underlying behaviour, not the particular tool, timeframe or medium a past hire happened to use (no "Excel", "over a weekend", "WhatsApp"): a future candidate may show the same behaviour in a different way. Never require a number of years.
 - PM and SPM may share dimensions (use the same criterion_key for the same dimension) with different weights and a higher SPM bar. The SPM bar should be higher where appropriate, particularly around independence, ambiguity, decision quality, consequences, scale and cross-functional ownership. Criteria may also reflect what each role must do per its JD, but weight the calibrated success patterns heavily.
 - Weights are integers; each role's weights must total exactly 100.
 - For each criterion, scoring_guidance must explain how the shared 0-4 scale applies:

@@ -9,6 +9,8 @@ const Body = z
     description: z.string().trim().min(10).max(1000).optional(),
     strong_evidence_description: z.string().trim().min(5).max(800).optional(),
     weak_evidence_description: z.string().trim().min(5).max(800).optional(),
+    observable_evidence: z.string().trim().min(10).max(1000).optional(),
+    scoring_guidance: z.string().trim().min(10).max(1500).optional(),
     weight: z.number().min(1).max(100).optional(),
   })
   .refine((b) => Object.keys(b).length > 0, 'Nothing to update');

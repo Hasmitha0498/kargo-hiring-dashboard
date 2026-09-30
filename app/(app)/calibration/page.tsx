@@ -1,3 +1,4 @@
+import { formatDate } from '@/lib/format';
 import { Badge } from '@/components/badges';
 import { AddHireForm, GenerateRubric, JdEditor, RemoveHire } from '@/components/CalibrationPanel';
 import * as repo from '@/lib/db/repo';
@@ -34,7 +35,7 @@ export default async function CalibrationPage() {
         <div className="text-sm text-slate-600">
           {active ? (
             <>
-              Active rubric: <span className="font-semibold text-navy-900">v{active.version}</span> (approved {active.approved_at && new Date(active.approved_at).toLocaleDateString()})
+              Active rubric: <span className="font-semibold text-navy-900">v{active.version}</span> (approved {active.approved_at && formatDate(active.approved_at)})
             </>
           ) : (
             'No active rubric yet.'

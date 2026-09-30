@@ -51,7 +51,7 @@ export async function evaluateCandidate(ctx: AiContext, rubric: RubricWithCriter
       parts: [{ text: evaluationUser(pm, spm, professionalText) }],
       jsonSchema: evaluationJsonSchema(pmKeys, spmKeys),
       schema: evaluationSchema(pmKeys, spmKeys),
-      temperature: 0.1,
+      temperature: 0,
       logFields,
     },
     ctx.retry,

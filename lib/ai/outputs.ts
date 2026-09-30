@@ -2,7 +2,7 @@
 import type { AiContext } from './context';
 import { generateJsonWithModel } from './gemini';
 import { OUTPUTS_SYSTEM, outputsUser, type OutputsInput } from './prompts';
-import { outputsJsonSchema, outputsSchema, type OutputsResult } from './schemas';
+import { outputsJsonSchema, outputsSchemaFor, type OutputsResult } from './schemas';
 
 export async function generateOutputs(ctx: AiContext, input: OutputsInput, logFields?: Record<string, string>): Promise<{ data: OutputsResult; model: string }> {
   return generateJsonWithModel(
@@ -13,7 +13,7 @@ export async function generateOutputs(ctx: AiContext, input: OutputsInput, logFi
       system: OUTPUTS_SYSTEM,
       parts: [{ text: outputsUser(input) }],
       jsonSchema: outputsJsonSchema,
-      schema: outputsSchema,
+      schema: outputsSchemaFor(input.scores.map((s) => s.criterion_name)),
       temperature: 0.4,
       lowThinking: true,
       logFields,

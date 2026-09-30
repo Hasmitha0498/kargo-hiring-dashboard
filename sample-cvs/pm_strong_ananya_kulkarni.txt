@@ -1,0 +1,20 @@
+Ananya Kulkarni
+ananya.kulkarni@example.com | +91 98450 11223 | Mumbai
+linkedin.com/in/ananya-kulkarni-product
+
+SUMMARY
+Product manager, 3 years, preceded by 2 years running dispatch operations at a cold-chain distributor.
+
+EXPERIENCE
+Product Manager | Coldtrace Logistics Software (Seed, 25 people) | 2022 – Present
+- First PM at the company; no existing roadmap or sprint process. Set up a two-week planning cadence that engineering still uses
+- Rode along on 14 night-shift reefer truck runs before specifying temperature-breach alerts; the alert feature is now used daily by 31 of 40 customers without onboarding help
+- Shipped 5 features in 12 months; removed a route-optimisation beta after 6 weeks when only 2 customers used it, and wrote a one-page note explaining why
+- When a customer's ERP export broke our daily sync, wrote a CSV fallback spec in one evening; engineering shipped it in 3 days and the customer renewed
+
+Dispatch Coordinator | FreshChain Distributors, Navi Mumbai | 2020 – 2022
+- Scheduled 60+ refrigerated deliveries daily across 9 carriers
+- Noticed drivers were phoning in delay updates that nobody logged; built a shared WhatsApp-to-Sheets log that cut "where is my truck" calls from retailers by about half; the other two depots copied it
+
+EDUCATION
+B.Sc. Statistics | University of Mumbai | 2017 – 2020

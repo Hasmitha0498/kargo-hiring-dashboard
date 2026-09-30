@@ -1,4 +1,5 @@
 'use client';
+import { formatDateTime } from '@/lib/format';
 import { useState } from 'react';
 import { ROLE_LABEL, type Role } from '@/lib/domain';
 import type { ScoreRow } from '@/lib/db/repo';
@@ -35,7 +36,7 @@ function Table({ data }: { data: RoleData }) {
         </span>
         <span>Rubric v{data.rubricVersion}</span>
         {data.model && <span>Model {data.model}</span>}
-        {data.evaluatedAt && <span>{new Date(data.evaluatedAt).toLocaleString()}</span>}
+        {data.evaluatedAt && <span>{formatDateTime(data.evaluatedAt)}</span>}
       </div>
       <div className="divide-y divide-line">
         {data.rows.map((r) => (

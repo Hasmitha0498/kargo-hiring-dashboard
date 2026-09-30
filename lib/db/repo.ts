@@ -237,7 +237,7 @@ export async function createDraftRubric(input: {
   throw new DbError('create rubric', 'could not allocate a version number');
 }
 
-export async function updateDraftCriterion(criterionId: string, patch: { description?: string; weight?: number; strong_evidence_description?: string; weak_evidence_description?: string }) {
+export async function updateDraftCriterion(criterionId: string, patch: { description?: string; weight?: number; strong_evidence_description?: string; weak_evidence_description?: string; observable_evidence?: string; scoring_guidance?: string }) {
   const c = must<{ rubric_id: string } | null>('find criterion', await db().from('rubric_criteria').select('rubric_id').eq('id', criterionId).maybeSingle());
   if (!c) throw new Error('Criterion not found.');
   const r = must<{ status: string } | null>('find rubric', await db().from('rubrics').select('status').eq('id', c.rubric_id).maybeSingle());

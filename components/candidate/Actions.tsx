@@ -1,4 +1,5 @@
 'use client';
+import { formatDateTime } from '@/lib/format';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { DECISION_LABEL, EMAIL_TYPE_LABEL, emailTypeForDecision, type EmailType, type FounderDecision, type SuggestedAction } from '@/lib/domain';
@@ -188,7 +189,7 @@ export function DecisionPanel({
           <ul className="mt-1 space-y-1">
             {history.map((h, i) => (
               <li key={i}>
-                {new Date(h.decided_at).toLocaleString()}: <span className="font-medium text-slate-700">{DECISION_LABEL[h.founder_decision]}</span>
+                {formatDateTime(h.decided_at)}: <span className="font-medium text-slate-700">{DECISION_LABEL[h.founder_decision]}</span>
                 {h.ai_suggested_action && <> (AI suggested {h.ai_suggested_action === 'INTERVIEW' ? 'Interview' : 'Reject'})</>}
                 {h.decision_notes && <> · “{h.decision_notes}”</>}
               </li>
@@ -234,7 +235,7 @@ export function EmailPanel(p: EmailPanelProps) {
         <h2 className="text-sm font-semibold text-navy-900">Send status</h2>
         <div className="mt-2 space-y-1 text-sm">
           <div>
-            <Badge color="violet">Sent</Badge> <span className="ml-1">{EMAIL_TYPE_LABEL[p.sent.type]}</span> · {p.sent.sentAt && new Date(p.sent.sentAt).toLocaleString()}
+            <Badge color="violet">Sent</Badge> <span className="ml-1">{EMAIL_TYPE_LABEL[p.sent.type]}</span> · {p.sent.sentAt && formatDateTime(p.sent.sentAt)}
           </div>
           {p.sent.testMode && (
             <div className="text-xs text-sky-800">
@@ -340,7 +341,7 @@ export function EmailPanel(p: EmailPanelProps) {
           </div>
           {status && <p className="text-xs text-slate-500">{status}</p>}
           {error && <p className="rounded-md bg-red-50 p-2 text-sm text-red-700">{error}</p>}
-          {p.failures.length > 0 && <p className="text-xs text-red-600">Previous attempt failed ({new Date(p.failures[0]!.at).toLocaleString()}): {p.failures[0]!.error}</p>}
+          {p.failures.length > 0 && <p className="text-xs text-red-600">Previous attempt failed ({formatDateTime(p.failures[0]!.at)}): {p.failures[0]!.error}</p>}
         </div>
       )}
 

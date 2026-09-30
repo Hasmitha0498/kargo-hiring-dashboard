@@ -3,7 +3,7 @@ import type { AiContext } from '@/lib/ai/context';
 import { evaluateCandidate } from '@/lib/ai/evaluate';
 import { GeminiError, type GeminiRequest } from '@/lib/ai/gemini';
 import { CALIBRATION_SYSTEM, EVALUATION_SYSTEM, evaluationUser } from '@/lib/ai/prompts';
-import { evaluationSchema, outputsSchema } from '@/lib/ai/schemas';
+import { evaluationSchema, outputsSchema, outputsSchemaFor } from '@/lib/ai/schemas';
 import { hireLabel } from '@/lib/ai/calibrate';
 import { criteriaFor } from '@/lib/domain';
 import { answer, cvText, rubric } from './helpers/fixtures';
@@ -100,6 +100,11 @@ describe('interview brief + email output validation (TEST 10, 11, 24)', () => {
     for (const leak of ['You scored 82.3/100.', 'You ranked in our top 5.', 'Our rubric flagged a gap.', 'you were shortlisted']) {
       expect(outputsSchema.safeParse({ ...ok, rejection: { ...ok.rejection, body: ok.rejection.body.replace('We have', `${leak} We have`) } }).success).toBe(false);
     }
+  });
+  it('blocks rubric criterion names from candidate emails', () => {
+    const leaky = { ...ok, invite: { ...ok.invite, body: ok.invite.body.replace('stood out.', 'is the kind of Operational Immersion we value.') } };
+    expect(outputsSchemaFor(['Operational Immersion']).safeParse(leaky).success).toBe(false);
+    expect(outputsSchemaFor(['Operational Immersion']).safeParse(ok).success).toBe(true);
   });
   it('allows real achievements with percentages', () => {
     expect(outputsSchema.safeParse({ ...ok, invite: { ...ok.invite, body: ok.invite.body.replace('stood out.', 'stood out, as did cutting mis-picks by 18%.') } }).success).toBe(true);

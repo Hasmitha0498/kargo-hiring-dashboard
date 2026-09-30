@@ -1,0 +1,19 @@
+Meera Joshi
+meera.joshi@example.com | +91 98220 44556 | Ahmedabad
+
+SUMMARY
+Product lead, 6 years, owning warehouse management and carrier platform products at two early-stage companies.
+
+EXPERIENCE
+Head of Product (first product hire) | Rackwise WMS (Series A, 50 people) | 2022 – Present
+- Owned the whole product area with no PM above me; built the planning process, discovery cadence and PRD format from scratch
+- Chose to integrate with customers' existing ERPs through a file-drop layer instead of building native connectors for each; this let us onboard 11 mid-size warehouses in 6 months, and I documented the trade-off (slower real-time sync) for the board
+- Spent two weeks on the night shift at our largest customer's warehouse after pick accuracy complaints; redesigned the scan flow, and mis-picks fell by 35% within a month
+- Paused a planned mobile app after pilots showed supervisors preferred shared wall screens; redirected the quarter to a wall-board view now used in 80% of sites
+
+Product Manager | Truckline (freight marketplace, seed stage) | 2019 – 2022
+- Launched carrier onboarding with KYC and document checks; cut carrier activation time from 5 days to 1
+- When a GST rule change broke invoice generation on a Friday, coordinated engineering, finance and support over the weekend and shipped a fix before Monday dispatch
+
+EDUCATION
+B.Tech Production Engineering | Nirma University | 2014 – 2018

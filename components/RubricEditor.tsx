@@ -1,4 +1,5 @@
 'use client';
+import { formatDateTime } from '@/lib/format';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ROLE_LABEL, type CalibrationPattern, type Criterion, type Role } from '@/lib/domain';
@@ -42,6 +43,8 @@ export function RubricView({ rubric, criteria, activeVersion }: Props) {
     if (c.description !== o.description) patch.description = c.description;
     if (c.strong_evidence_description !== o.strong_evidence_description) patch.strong_evidence_description = c.strong_evidence_description;
     if (c.weak_evidence_description !== o.weak_evidence_description) patch.weak_evidence_description = c.weak_evidence_description;
+    if (c.observable_evidence !== o.observable_evidence) patch.observable_evidence = c.observable_evidence;
+    if (c.scoring_guidance !== o.scoring_guidance) patch.scoring_guidance = c.scoring_guidance;
     if (Number(c.weight) !== Number(o.weight)) patch.weight = Number(c.weight);
     if (!Object.keys(patch).length) return;
     setSavingId(c.id);
@@ -56,7 +59,14 @@ export function RubricView({ rubric, criteria, activeVersion }: Props) {
 
   const unsaved = rows.some((c) => {
     const o = original(c.id);
-    return c.description !== o.description || c.strong_evidence_description !== o.strong_evidence_description || c.weak_evidence_description !== o.weak_evidence_description || Number(c.weight) !== Number(o.weight);
+    return (
+      c.description !== o.description ||
+      c.strong_evidence_description !== o.strong_evidence_description ||
+      c.weak_evidence_description !== o.weak_evidence_description ||
+      c.observable_evidence !== o.observable_evidence ||
+      c.scoring_guidance !== o.scoring_guidance ||
+      Number(c.weight) !== Number(o.weight)
+    );
   });
 
   async function approve() {
@@ -92,8 +102,8 @@ export function RubricView({ rubric, criteria, activeVersion }: Props) {
             <Badge color={rubric.status === 'ACTIVE' ? 'green' : rubric.status === 'DRAFT' ? 'amber' : 'slate'}>{rubric.status}</Badge>
           </div>
           <p className="mt-0.5 text-xs text-slate-500">
-            Created {new Date(rubric.created_at).toLocaleString()}
-            {rubric.approved_at && <> · approved {new Date(rubric.approved_at).toLocaleString()}</>}
+            Created {formatDateTime(rubric.created_at)}
+            {rubric.approved_at && <> · approved {formatDateTime(rubric.approved_at)}</>}
             {rubric.calibration_model && <> · calibrated with {rubric.calibration_model}</>}
           </p>
         </div>
@@ -170,18 +180,28 @@ export function RubricView({ rubric, criteria, activeVersion }: Props) {
               <Field label="Description" value={c.description} editable={editable} onChange={(v) => edit(c.id, { description: v })} onBlur={() => save(c)} />
               <Field label="Strong evidence looks like" value={c.strong_evidence_description} editable={editable} onChange={(v) => edit(c.id, { strong_evidence_description: v })} onBlur={() => save(c)} />
               <Field label="Weak evidence looks like" value={c.weak_evidence_description} editable={editable} onChange={(v) => edit(c.id, { weak_evidence_description: v })} onBlur={() => save(c)} />
-              <details className="text-xs text-slate-600">
-                <summary className="cursor-pointer text-slate-500">What counts as evidence · scoring guidance · calibration rationale</summary>
-                <p className="mt-1">
-                  <span className="font-semibold">Observable evidence:</span> {c.observable_evidence}
-                </p>
-                <p className="mt-1">
-                  <span className="font-semibold">Scoring guidance:</span> {c.scoring_guidance}
-                </p>
-                <p className="mt-1">
-                  <span className="font-semibold">Calibration rationale:</span> {c.calibration_rationale}
-                </p>
-              </details>
+              {editable ? (
+                <>
+                  <Field label="What counts as evidence" value={c.observable_evidence} editable onChange={(v) => edit(c.id, { observable_evidence: v })} onBlur={() => save(c)} />
+                  <Field label="Scoring guidance (0-4)" value={c.scoring_guidance} editable onChange={(v) => edit(c.id, { scoring_guidance: v })} onBlur={() => save(c)} />
+                  <p className="text-xs text-slate-500">
+                    <span className="font-semibold">Calibration rationale:</span> {c.calibration_rationale}
+                  </p>
+                </>
+              ) : (
+                <details className="text-xs text-slate-600">
+                  <summary className="cursor-pointer text-slate-500">What counts as evidence · scoring guidance · calibration rationale</summary>
+                  <p className="mt-1">
+                    <span className="font-semibold">Observable evidence:</span> {c.observable_evidence}
+                  </p>
+                  <p className="mt-1">
+                    <span className="font-semibold">Scoring guidance:</span> {c.scoring_guidance}
+                  </p>
+                  <p className="mt-1">
+                    <span className="font-semibold">Calibration rationale:</span> {c.calibration_rationale}
+                  </p>
+                </details>
+              )}
             </div>
           </div>
         ))}

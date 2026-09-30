@@ -78,4 +78,12 @@ describe('evidence grounding', () => {
   const cv = 'Killed a barcode feature after two weeks of low usage and moved the team to exception alerts, which cut mis-picks by 18%';
   it('accepts verbatim excerpts, ignoring punctuation and quotes', () => expect(isEvidenceGrounded('"killed a barcode feature after two weeks" … cut mis-picks by 18%', cv)).toBe(true));
   it('flags invented text', () => expect(isEvidenceGrounded('Increased revenue by 40% across four regions', cv)).toBe(false));
+  it('matches quotes across PDF hard-wraps that split words', () => {
+    const wrapped = 'instead ship a co\nnfigurable mapping layer; took the call against sales pressure';
+    expect(isEvidenceGrounded('instead ship a configurable mapping layer … took the call against sales pressure', wrapped)).toBe(true);
+  });
+  it('checks short skill-word evidence as whole words', () => {
+    expect(isEvidenceGrounded('APIs, Integrations', 'Skills: Roadmapping, APIs, Integrations, Jira')).toBe(true);
+    expect(isEvidenceGrounded('AI', 'maintained the platform')).toBe(false);
+  });
 });

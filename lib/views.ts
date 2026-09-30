@@ -75,13 +75,17 @@ export async function candidateList(): Promise<CandidateListItem[]> {
 
 /** Ranked list for one role: applicants for that role only, by that role's score (ties keep upload order). */
 export function rankedForRole(items: CandidateListItem[], role: Role) {
-  const mine = items.filter((i) => i.appliedRole === role);
+  const mine = items.filter((i) => i.appliedRole === role && i.status !== 'PARSE_FAILED');
   const scored = mine.filter((i) => i.appliedTotal !== null).sort((a, b) => (a.rank ?? 9e9) - (b.rank ?? 9e9) || a.createdAt.localeCompare(b.createdAt));
   const unscored = mine.filter((i) => i.appliedTotal === null);
   return { scored, unscored };
 }
 
-export function summary(items: CandidateListItem[]) {
+/** Uploads whose file could not be read: not candidates yet, listed separately so they never distort counts. */
+export const failedUploads = (items: CandidateListItem[]) => items.filter((i) => i.status === 'PARSE_FAILED');
+
+export function summary(all: CandidateListItem[]) {
+  const items = all.filter((i) => i.status !== 'PARSE_FAILED');
   return {
     total: items.length,
     pm: items.filter((i) => i.appliedRole === 'PM').length,

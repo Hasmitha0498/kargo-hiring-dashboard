@@ -3,7 +3,7 @@ import { Badge, DecisionBadge, EmailStatusBadge, ShortlistBadge, StatusBadge } f
 import { getActiveRubric } from '@/lib/db/repo';
 import { ROLE_LABEL, SHORTLIST_SIZE, type Role } from '@/lib/domain';
 import { displayScore } from '@/lib/scoring/calculate';
-import { candidateList, rankedForRole, summary, type CandidateListItem } from '@/lib/views';
+import { candidateList, failedUploads, rankedForRole, summary, type CandidateListItem } from '@/lib/views';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,6 +33,12 @@ function Row({ c, activeVersion }: { c: CandidateListItem; activeVersion: number
             </Badge>
           )}
         </div>
+        {c.strongest && (
+          <div className="mt-1 max-w-xs text-xs text-slate-500 md:hidden">
+            <span className="font-semibold text-slate-700">{c.strongest.name}:</span> <span className="line-clamp-2">{c.strongest.evidence}</span>
+            {c.gap && <div className="mt-0.5">Gap: {c.gap.name}</div>}
+          </div>
+        )}
       </td>
       <td className="hidden px-3 py-3 text-xs text-slate-600 lg:table-cell">{c.appliedRole}</td>
       <td className="px-3 py-3 text-right">
@@ -73,6 +79,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const [items, active] = await Promise.all([candidateList(), getActiveRubric()]);
   const s = summary(items);
   const { scored, unscored } = rankedForRole(items, role);
+  const failed = failedUploads(items);
   const activeVersion = active?.version ?? null;
 
   return (
@@ -109,7 +116,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
                 href={r === 'PM' ? '/' : '/?role=SPM'}
                 className={`-mb-px border-b-2 px-3 pb-2.5 text-sm font-medium ${r === role ? 'border-navy-900 text-navy-900' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
               >
-                {ROLE_LABEL[r]} <span className="ml-1 text-xs text-slate-400">{items.filter((i) => i.appliedRole === r).length}</span>
+                {ROLE_LABEL[r]} <span className="ml-1 text-xs text-slate-400">{items.filter((i) => i.appliedRole === r && i.status !== 'PARSE_FAILED').length}</span>
               </Link>
             ))}
           </div>
@@ -153,6 +160,24 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
           </div>
         )}
       </section>
+
+      {failed.length > 0 && (
+        <details className="card p-4 text-sm">
+          <summary className="cursor-pointer font-semibold text-red-700">Failed uploads ({failed.length}): files that could not be read</summary>
+          <ul className="mt-2 divide-y divide-line">
+            {failed.map((f) => (
+              <li key={f.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
+                <span>
+                  <span className="font-medium text-slate-800">{f.name.replace(/^Unnamed \((.*)\)$/, '$1')}</span> <span className="text-slate-500">· {f.appliedRole} · {f.errorMessage}</span>
+                </span>
+                <Link href={`/candidates/${f.id}`} className="btn-secondary text-xs">
+                  Open
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
     </div>
   );
 }
