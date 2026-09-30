@@ -1,0 +1,8 @@
+# Never upload these to Vercel
+calibration-data/
+.env
+.env.local
+.env*.local
+node_modules/
+.next/
+tests/
