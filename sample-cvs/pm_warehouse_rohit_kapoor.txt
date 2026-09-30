@@ -1,0 +1,14 @@
+Rohit Kapoor
+rohit.kapoor@example.com | +91 98765 10101 | Pune
+
+EXPERIENCE
+Associate Product Manager | Binloop WMS (Series A) | 2023 – Present
+- Owns the returns-processing module; spent two weeks on the returns desk at a customer warehouse before writing the spec
+- Shipped a barcode-first returns flow that cut average return processing time from 6 minutes to 2
+- Paused a planned analytics dashboard after customers said they only needed a daily email summary; shipped that instead in one sprint
+
+Warehouse Supervisor | Metro Fulfilment | 2020 – 2023
+- Ran a 25-person night shift; introduced a shift-handover board after repeated missed dispatches, which the day shift also adopted
+
+EDUCATION
+BBA | Symbiosis | 2017 – 2020

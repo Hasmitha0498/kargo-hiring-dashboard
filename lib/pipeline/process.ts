@@ -30,13 +30,13 @@ export type Emit = (event: ProgressEvent) => void;
 export function friendlyError(error: unknown): string {
   if (error instanceof ParseError || error instanceof MissingEnvError) return error.message;
   if (error instanceof GeminiError) {
-    if (error.kind === 'rate_limited') return 'Gemini rate limit reached. Wait a minute, then press Retry.';
-    if (error.kind === 'unavailable') return 'Gemini did not respond in time (timeout or temporary outage). Press Retry.';
-    if (error.kind === 'invalid_output') return 'Gemini returned an answer that failed validation several times. Press Retry.';
-    return 'Gemini rejected the request (check GEMINI_API_KEY and GEMINI_MODEL). Details are in the server logs.';
+    if (error.kind === 'rate_limited') return 'The AI service is busy (rate limit). Wait a minute, then press Retry.';
+    if (error.kind === 'unavailable') return 'The AI service did not respond in time. Press Retry.';
+    if (error.kind === 'invalid_output') return 'The AI returned an incomplete answer several times. Press Retry.';
+    return 'The AI service refused the request. This is a server configuration problem (API key or model); the administrator can find details in the server logs.';
   }
-  if (error instanceof Error && /Database error/.test(error.message)) return 'Database error while saving. Check the Supabase connection, then Retry.';
-  if (error instanceof Error && /fetch failed|ENOTFOUND|ECONNRESET|network/i.test(error.message)) return 'Network error reaching an external service. Press Retry.';
+  if (error instanceof Error && /Database error/.test(error.message)) return 'The database could not be reached while saving. Press Retry in a moment.';
+  if (error instanceof Error && /fetch failed|ENOTFOUND|ECONNRESET|network/i.test(error.message)) return 'A network error interrupted the analysis. Press Retry.';
   return error instanceof Error ? error.message.slice(0, 300) : 'Unexpected error.';
 }
 

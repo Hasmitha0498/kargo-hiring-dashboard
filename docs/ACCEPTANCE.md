@@ -37,3 +37,16 @@ Test candidates were 7 invented CVs in `sample-cvs/` (never part of calibration;
 ## Open product question
 
 With fewer than 5 applicants in a role, everyone is "top 5", so the AI suggests *Interview* even for a 3.8/100 CV. This follows the brief (top 5 = shortlist recommended). A minimum score for the recommendation is the obvious fix, but it changes product behaviour, so it is left for the founder to decide.
+
+## Round 2 (1 Oct 2026): open access + UX rework, re-tested on production
+
+| Test | Result | Evidence |
+|---|---|---|
+| E: no password | ✅ | Cookie-less requests: `/` 307 → `/dashboard`; `/dashboard`, `/upload`, `/rubric`, `/activity`, `/calibration`, `/candidates/[id]` all 200; `/login` 404 |
+| A: new PM CV (TXT) | ✅ | Sneha Verma: role PM, identity only in the private record, PM 70.0 + SPM 61.3, 5 criteria with evidence and reasoning, ranked #4 in the PM list only; hand-calculated Σ(raw ÷ 4 × weight) = 70.00 = stored |
+| B: new SPM CV (DOCX) | ✅ | Vivek Menon: SPM 71.3 (#3 in the SPM list) + PM 83.8 (not ranked in PM); hand calculation 71.25 = stored |
+| Ranking | ✅ | Both lists sorted descending; 0 other-role applicants ranked in either list; a 6th PM applicant pushed the lowest scorer out of the top 5 and his suggestion switched to Reject |
+| C: Gemini failure | ✅ | Broken key (local only) → candidate saved as AI_FAILED; **Retry Scoring** clicked on the production page → live checklist → scored (PM 66.3, #5), no re-upload |
+| D: Resend | ✅ | Send refused before a decision (409) → Interview → Confirm & Send → Resend id `01a0f3d7-…`, delivered to the test inbox, sent_at stored, status EMAIL_SENT, Activity shows decision + "Interview invitation sent", duplicate blocked (409) |
+| Secrets | ✅ | Production bundle scan: 0 occurrences of any key or the test inbox address |
+| Responsive | ✅ | 1440 / 1024 / 390 px: no horizontal scroll; dashboard switches to cards on mobile |

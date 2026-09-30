@@ -1,0 +1,16 @@
+Sneha Verma
+sneha.verma@example.com | +91 98110 67676 | Delhi
+
+EXPERIENCE
+Product Manager | Clearpath Customs Tech (seed stage, 18 people) | 2023 – Present
+- First and only PM; defined the release process and weekly customer review call from nothing
+- Sat with customs brokers at the Tughlakabad ICD for three weeks before rewriting the bill-of-entry filing flow; filing errors reported by brokers fell by 40%
+- Launched duty calculator after brokers kept a personal spreadsheet for it; 70% of active users use it weekly without training
+- Removed a chat feature after two months of near-zero use and documented what we learned in a public changelog
+
+Operations Executive | Northline Freight | 2020 – 2023
+- Coordinated air-export documentation for 90+ shipments a month
+- Created a checklist for dangerous-goods paperwork after two rejected shipments; zero rejections in the following year
+
+EDUCATION
+B.Com | Delhi University | 2017 – 2020

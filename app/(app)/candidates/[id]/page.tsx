@@ -109,24 +109,22 @@ export default async function CandidatePage({ params }: { params: Promise<{ id: 
 
         {(failed || stale || incomplete) && (
           <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-4">
-            <p className="text-sm font-semibold text-red-800">
-              {c.processing_status === 'PARSE_FAILED'
-                ? 'The CV file could not be read.'
-                : incomplete
-                  ? 'Some analysis results are missing.'
-                  : stale
-                    ? 'Analysis stopped before finishing.'
-                    : c.failed_stage === 'GENERATING_OUTPUTS'
-                      ? 'The interview brief or email draft could not be prepared.'
-                      : 'AI scoring failed.'}
-            </p>
-            <p className="mt-0.5 text-sm text-red-700">
-              {c.error_message ?? ''} {c.processing_status === 'PARSE_FAILED' ? 'Upload a readable PDF, DOCX or TXT copy instead.' : 'Your candidate has been saved; you do not need to upload the CV again.'}
-            </p>
-            {c.processing_status !== 'PARSE_FAILED' && (
-              <div className="mt-3">
-                <ProcessPanel candidateId={c.id} mode={incomplete ? 'score' : 'auto'} label={c.failed_stage === 'GENERATING_OUTPUTS' ? 'Retry' : 'Retry Scoring'} />
-              </div>
+            {c.processing_status === 'PARSE_FAILED' ? (
+              <>
+                <p className="text-sm font-semibold text-red-800">The CV file could not be read.</p>
+                <p className="mt-0.5 text-sm text-red-700">{c.error_message} Upload a readable PDF, DOCX or TXT copy instead.</p>
+              </>
+            ) : (
+              <ProcessPanel candidateId={c.id} mode={incomplete ? 'score' : 'auto'} label={c.failed_stage === 'GENERATING_OUTPUTS' ? 'Retry' : 'Retry Scoring'}>
+                <div>
+                  <p className="text-sm font-semibold text-red-800">
+                    {incomplete ? 'Some analysis results are missing.' : stale ? 'Analysis stopped before finishing.' : c.failed_stage === 'GENERATING_OUTPUTS' ? 'The interview brief or email draft could not be prepared.' : 'AI scoring failed.'}
+                  </p>
+                  <p className="mt-0.5 text-sm text-red-700">
+                    {c.error_message ?? ''} Your candidate has been saved; you do not need to upload the CV again.
+                  </p>
+                </div>
+              </ProcessPanel>
             )}
           </div>
         )}

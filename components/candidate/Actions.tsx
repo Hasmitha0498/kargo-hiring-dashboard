@@ -20,7 +20,7 @@ async function call(url: string, method: string, body?: unknown): Promise<string
 
 // ------------------------------------------------------------------ retry / re-evaluate
 
-export function ProcessPanel({ candidateId, mode, label, note }: { candidateId: string; mode: 'auto' | 'score'; label: string; note?: string }) {
+export function ProcessPanel({ candidateId, mode, label, note, children }: { candidateId: string; mode: 'auto' | 'score'; label: string; note?: string; children?: React.ReactNode }) {
   const router = useRouter();
   const [stages, setStages] = useState<StageState | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +55,8 @@ export function ProcessPanel({ candidateId, mode, label, note }: { candidateId: 
 
   return (
     <div className="space-y-3">
+      {/* The original failure message is replaced by live progress as soon as a retry starts. */}
+      {stages === null ? children : <p className="text-sm font-semibold text-navy-900">{busy ? 'Retrying…' : error ? 'Retry did not finish.' : 'Done.'}</p>}
       <div className="flex flex-wrap items-center gap-3">
         <button className="btn-primary" onClick={run} disabled={busy}>
           {busy ? 'Working…' : label}
