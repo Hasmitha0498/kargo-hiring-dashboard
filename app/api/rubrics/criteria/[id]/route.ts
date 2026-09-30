@@ -1,6 +1,5 @@
 // Edit a criterion of a DRAFT rubric (description / evidence definitions / weight). Approved rubrics are immutable.
 import { z } from 'zod';
-import { requireApiSession } from '@/lib/auth/guard';
 import * as repo from '@/lib/db/repo';
 import { handle, jsonError, readBody } from '@/lib/http';
 
@@ -16,8 +15,6 @@ const Body = z
   .refine((b) => Object.keys(b).length > 0, 'Nothing to update');
 
 export const PATCH = handle('rubric.edit_criterion', async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
-  const denied = await requireApiSession();
-  if (denied) return denied;
   const { id } = await params;
   const body = await readBody(request, Body);
   if ('error' in body) return body.error;

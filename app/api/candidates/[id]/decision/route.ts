@@ -1,6 +1,5 @@
 // The founder's decision. Stored as a new row next to (never over) the system suggestion. Sends nothing.
 import { z } from 'zod';
-import { requireApiSession } from '@/lib/auth/guard';
 import * as repo from '@/lib/db/repo';
 import { emailTypeForDecision } from '@/lib/domain';
 import { handle, jsonError, readBody } from '@/lib/http';
@@ -9,8 +8,6 @@ import { suggestedActionFor } from '@/lib/pipeline/process';
 const Body = z.object({ decision: z.enum(['UNDECIDED', 'INTERVIEW', 'REJECT', 'HOLD']), notes: z.string().trim().max(2000).optional() });
 
 export const POST = handle('decision.save', async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
-  const denied = await requireApiSession();
-  if (denied) return denied;
   const { id } = await params;
   const body = await readBody(request, Body);
   if ('error' in body) return body.error;

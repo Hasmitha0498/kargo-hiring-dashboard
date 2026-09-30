@@ -28,7 +28,6 @@ export const env = {
   resendApiKey: () => required('RESEND_API_KEY'),
   resendFrom: () => required('RESEND_FROM_EMAIL'),
   resendTestEmail: () => read('RESEND_TEST_EMAIL'),
-  adminPassword: () => required('ADMIN_PASSWORD'),
   companyName: () => read('COMPANY_NAME') ?? 'Kargo',
   senderName: () => read('SENDER_NAME') ?? 'Arjun Mehta',
   senderTitle: () => read('SENDER_TITLE') ?? 'Founder',
@@ -36,6 +35,6 @@ export const env = {
 
 /** Which integrations are configured, for the setup banner. Reports names only, never values. */
 export function configStatus() {
-  const names = ['NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'GEMINI_API_KEY', 'RESEND_API_KEY', 'RESEND_FROM_EMAIL', 'ADMIN_PASSWORD'];
+  const names = ['NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'GEMINI_API_KEY', 'RESEND_API_KEY', 'RESEND_FROM_EMAIL'];
   return { missing: names.filter((n) => !read(n)), testEmail: read('RESEND_TEST_EMAIL') ?? null };
 }

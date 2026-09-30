@@ -1,6 +1,5 @@
 // Add a past hire (calibration data). The CV is parsed and its identity removed exactly like a candidate's; only the
 // identity-free text is ever sent to the AI during calibration.
-import { requireApiSession } from '@/lib/auth/guard';
 import * as repo from '@/lib/db/repo';
 import { OUTCOMES, type Outcome } from '@/lib/domain';
 import { handle, jsonError } from '@/lib/http';
@@ -10,8 +9,6 @@ import { separateIdentity } from '@/lib/parse/identity';
 export const runtime = 'nodejs';
 
 export const POST = handle('calibration.add_hire', async (request: Request) => {
-  const denied = await requireApiSession();
-  if (denied) return denied;
   const form = await request.formData().catch(() => null);
   const file = form?.get('file');
   const roleHired = String(form?.get('role_hired') ?? '').trim();

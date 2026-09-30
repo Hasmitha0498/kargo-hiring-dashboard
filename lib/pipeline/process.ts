@@ -79,7 +79,7 @@ async function scoreStage(candidateId: string, ai: AiContext, emit: Emit) {
   emit({ type: 'stage', stage: 'evaluating_spm', state: 'active' });
   try {
     const rubric = await repo.getActiveRubric();
-    if (!rubric) throw new Error('No approved rubric yet. Generate and approve one on the Rubric page, then press Retry.');
+    if (!rubric) throw new Error('The hiring rubric has not been set up yet (Hiring Rubric → Rubric setup). Once it is approved, press Retry.');
     const result = await evaluateCandidate(ai, rubric, candidate.professional_cv_text, { candidateId });
     emit({ type: 'stage', stage: 'evaluating_pm', state: 'done' });
     emit({ type: 'stage', stage: 'evaluating_spm', state: 'done' });
@@ -185,6 +185,7 @@ async function run(candidateId: string, emit: Emit, steps: ((emit: Emit) => Prom
     const stage = error instanceof StageError ? error.stage : 'reading';
     const cause = error instanceof StageError ? error.cause : error;
     log.error('pipeline.failed', { candidateId, stage, error: describeError(cause) });
+    await repo.logActivity('ANALYSIS_FAILED', { candidate_id: candidateId, detail: { stage, message: error instanceof Error ? error.message : friendlyError(cause) } }).catch(() => undefined);
     emit({ type: 'error', stage, message: error instanceof Error ? error.message : friendlyError(error), retryable: !(cause instanceof ParseError) });
   }
 }

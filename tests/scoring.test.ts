@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { competitionRank, displayScore, isShortlisted, isShortlistRecommended, primaryGap, roleTotal, strongestCriterion, weightedScore } from '@/lib/scoring/calculate';
+import { competitionRank, displayScore, evidenceLevel, isShortlisted, isShortlistRecommended, primaryGap, roleTotal, strongestCriterion, weightedScore } from '@/lib/scoring/calculate';
 import { checkRubric } from '@/lib/rubric/validate';
 import { isEvidenceGrounded } from '@/lib/scoring/grounding';
 
@@ -85,5 +85,14 @@ describe('evidence grounding', () => {
   it('checks short skill-word evidence as whole words', () => {
     expect(isEvidenceGrounded('APIs, Integrations', 'Skills: Roadmapping, APIs, Integrations, Jira')).toBe(true);
     expect(isEvidenceGrounded('AI', 'maintained the platform')).toBe(false);
+  });
+});
+
+describe('neutral evidence label (never a verdict)', () => {
+  it('maps totals to High / Moderate / Limited rubric evidence', () => {
+    expect(evidenceLevel(86.5)?.label).toBe('High rubric evidence');
+    expect(evidenceLevel(55)?.label).toBe('Moderate rubric evidence');
+    expect(evidenceLevel(3.8)?.label).toBe('Limited rubric evidence');
+    expect(evidenceLevel(null)).toBeNull();
   });
 });

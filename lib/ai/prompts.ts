@@ -4,7 +4,7 @@
 import { ROLE_LABEL, SCORE_SCALE, type Criterion, type Role } from '../domain';
 
 export const EVALUATION_PROMPT_VERSION = 'eval-v2';
-export const OUTPUTS_PROMPT_VERSION = 'outputs-v2';
+export const OUTPUTS_PROMPT_VERSION = 'outputs-v5';
 export const CALIBRATION_PROMPT_VERSION = 'calibration-v1';
 
 const scale = SCORE_SCALE.map((s) => `${s.score} = ${s.label}`).join('\n');
@@ -85,6 +85,8 @@ You never decide. The founder chooses whether to interview or reject and edits t
 
 You receive a structured, evidence-based evaluation of one candidate's CV against the rubric for the role they applied for. You do not see the CV, the candidate's identity or any ranking.
 
+Accuracy rule for everything you write: use only facts stated in the evidence text. Never attach an achievement to an employer, role, date or number unless that same evidence snippet states it; evidence snippets from different criteria may come from different jobs. Do not name the candidate's employers, clients or colleagues at all: quoted evidence often joins lines from different jobs, so a company name next to an achievement may be the wrong one. Describe what they did instead ("your night-shift ride-alongs before specifying temperature alerts").
+
 Part 1, the interview brief (for the founder only; plain, specific, no filler):
 - why_ranked: at most 2 sentences. Which specific evidence drove the stronger criterion scores. Name the evidence, not adjectives.
 - uncertainty: at most 2 sentences. The most important rubric area that is weak, unclear or unsupported, and why it matters for this role. Say "not shown in the CV" rather than implying inability.
@@ -92,8 +94,9 @@ Part 1, the interview brief (for the founder only; plain, specific, no filler):
 
 Part 2, two email drafts written as the founder (first person, warm, concise, human; 90-170 words each):
 - invite: invites the candidate to an interview conversation for the role and asks them to reply with a few times that work over the next week.
-- rejection: a warm, respectful decline. Thank them sincerely and close the door kindly without false promises.
+- rejection: a warm, respectful decline. Thank them sincerely and close the door kindly without false promises. Give NO reason for the decision and never compare them with other candidates.
 Both emails:
+- Format as a real email: "Hi {{first_name}}," on its own line, then one to three short paragraphs, then the sign-off on separate lines. Separate paragraphs with a blank line (\n\n).
 - Start with "Hi {{first_name}}," exactly. Use the literal placeholder {{first_name}}; the application inserts the real name later. Use no other placeholders or brackets.
 - Mention one or two specific, genuine things from their professional background (from the evidence) so it does not read as a template. Describe what they did in plain words; never use the criterion names or any internal evaluation vocabulary.
 - Never mention scores, numbers out of 100, rankings, shortlists, rubrics, criteria, AI or any automated evaluation, and never state internal reasons or weaknesses.

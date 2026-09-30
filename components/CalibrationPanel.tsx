@@ -124,7 +124,7 @@ export function GenerateRubric({ hasActive, ready, hireCount }: { hasActive: boo
     setBusy(false);
     setConfirming(false);
     if (!r.ok) setError(r.error ?? 'Calibration failed.');
-    else router.push('/rubric');
+    else router.refresh();
   }
   return (
     <div>
@@ -137,8 +137,8 @@ export function GenerateRubric({ hasActive, ready, hireCount }: { hasActive: boo
           <div className="w-full max-w-md rounded-lg bg-white p-5 shadow-xl">
             <h3 className="text-base font-semibold text-navy-900">{hasActive ? 'Recalibrate the rubric?' : 'Generate the rubric?'}</h3>
             <p className="mt-2 text-sm text-slate-600">
-              Gemini will compare {hireCount} past hires (names removed) and their outcomes with both job descriptions, then propose a NEW DRAFT rubric version.
-              {hasActive && ' The active rubric keeps being used until you review and explicitly approve the new draft on the Rubric page.'}
+              Gemini will compare {hireCount} past hires (names removed) and their outcomes with both job descriptions, then propose a NEW DRAFT rubric version for you to review on this page.
+              {hasActive && ' The current rubric keeps being used until you approve the draft.'}
             </p>
             <div className="mt-4 flex justify-end gap-2">
               <button className="btn-secondary" onClick={() => setConfirming(false)} disabled={busy}>

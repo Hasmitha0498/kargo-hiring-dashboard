@@ -76,6 +76,9 @@ export function evaluationJsonSchema(pmKeys: string[], spmKeys: string[]): Recor
 /** Candidate-facing text must never reveal internal scoring. */
 const INTERNAL_LEAK = /\b(scor(?:e|es|ed|ing)|rank(?:ed|ing|ings)?|rubrics?|criteri(?:on|a)|shortlist(?:ed|ing)?|algorithm|automated evaluation)\b|\d+(?:\.\d+)?\s*(?:\/\s*100|out of 100)/i;
 
+/** A rejection must not explain or compare: those are internal reasons. */
+const REJECTION_REASON = /\b(candidates? whose|other candidates (?:with|who)|more closely (?:align|match)|closer (?:fit|match)|better (?:fit|suited|match)|stronger (?:fit|match|candidates?)|lack(?:s|ed|ing)?|gaps?|weakness(?:es)?|not (?:enough|sufficient)|insufficient|limited experience)\b/i;
+
 const email = z.object({
   subject: z.string().trim().min(3).max(140),
   body: z.string().trim().min(80).max(2500),
@@ -93,14 +96,19 @@ export function outputsSchemaFor(criterionNames: string[]) {
   })
   .superRefine((o, ctx) => {
     for (const [name, e] of [['invite', o.invite], ['rejection', o.rejection]] as const) {
+      if (e.body.trim().split(/\n\s*\n/).length < 3) ctx.addIssue({ code: 'custom', path: [name, 'body'], message: 'must be split into short paragraphs separated by blank lines (greeting line, 1-3 body paragraphs, sign-off)' });
       if (!e.body.includes('{{first_name}}')) ctx.addIssue({ code: 'custom', path: [name, 'body'], message: 'must greet the candidate with the {{first_name}} placeholder' });
       const leak = `${e.subject}\n${e.body}`.match(INTERNAL_LEAK);
       if (leak) ctx.addIssue({ code: 'custom', path: [name], message: `must not mention internal evaluation details (found "${leak[0]}")` });
       if (/\[[^\]]*\]/.test(e.body.replace(/\[Candidate\]/g, ''))) ctx.addIssue({ code: 'custom', path: [name, 'body'], message: 'must not contain bracketed placeholders other than {{first_name}}' });
-      const text = `${e.subject}\n${e.body}`.toLowerCase();
-      const named = criterionNames.find((n) => n.trim().length > 3 && text.includes(n.toLowerCase()));
+      // Compare letters only, so "problem-solving" still matches the criterion "Problem Solving".
+      const plain = (t: string) => ` ${t.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim()} `;
+      const text = plain(`${e.subject}\n${e.body}`);
+      const named = criterionNames.find((n) => n.trim().length > 3 && text.includes(plain(n)));
       if (named) ctx.addIssue({ code: 'custom', path: [name], message: `must not use internal evaluation vocabulary such as "${named}"; describe what the candidate did in plain words` });
     }
+    const reason = o.rejection.body.match(REJECTION_REASON);
+    if (reason) ctx.addIssue({ code: 'custom', path: ['rejection', 'body'], message: `must not give or imply a reason for the decision (found "${reason[0]}")` });
     if (!o.interview_probe.includes('?')) ctx.addIssue({ code: 'custom', path: ['interview_probe'], message: 'must be a question' });
   });
 }

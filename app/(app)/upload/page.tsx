@@ -6,10 +6,10 @@ export const dynamic = 'force-dynamic';
 export default async function UploadPage() {
   const active = await getActiveRubric().catch(() => null);
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold text-navy-900">Upload Candidate</h1>
-        <p className="text-sm text-slate-500">Contact details are separated from the CV before any AI step. The AI only sees professional content.</p>
+    <div className="space-y-5">
+      <div className="mx-auto max-w-2xl">
+        <h1 className="text-2xl font-semibold text-navy-900">Upload Candidate</h1>
+        <p className="text-sm text-slate-500">Upload a CV and select the role they applied for.</p>
       </div>
       <UploadForm rubricReady={Boolean(active)} />
     </div>

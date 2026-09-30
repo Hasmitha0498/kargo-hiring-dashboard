@@ -1,11 +1,8 @@
 // Start a new DRAFT version from an existing rubric, so an approved rubric is never edited in place.
-import { requireApiSession } from '@/lib/auth/guard';
 import * as repo from '@/lib/db/repo';
 import { handle, jsonError } from '@/lib/http';
 
 export const POST = handle('rubric.clone', async (_request: Request, { params }: { params: Promise<{ id: string }> }) => {
-  const denied = await requireApiSession();
-  if (denied) return denied;
   const { id } = await params;
   const source = await repo.getRubric(id);
   if (!source) return jsonError('Rubric not found.', 404);

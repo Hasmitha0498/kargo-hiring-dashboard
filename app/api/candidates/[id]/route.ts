@@ -1,6 +1,5 @@
 // Correct the private details (name / email) found by the parser, or delete a candidate.
 import { z } from 'zod';
-import { requireApiSession } from '@/lib/auth/guard';
 import * as repo from '@/lib/db/repo';
 import { isEmailAddress } from '@/lib/email/compose';
 import { handle, jsonError, readBody } from '@/lib/http';
@@ -11,8 +10,6 @@ const Patch = z.object({
 });
 
 export const PATCH = handle('candidate.patch', async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
-  const denied = await requireApiSession();
-  if (denied) return denied;
   const { id } = await params;
   const body = await readBody(request, Patch);
   if ('error' in body) return body.error;
@@ -25,8 +22,6 @@ export const PATCH = handle('candidate.patch', async (request: Request, { params
 });
 
 export const DELETE = handle('candidate.delete', async (_request: Request, { params }: { params: Promise<{ id: string }> }) => {
-  const denied = await requireApiSession();
-  if (denied) return denied;
   const { id } = await params;
   const c = await repo.getCandidate(id);
   if (!c) return jsonError('Candidate not found.', 404);

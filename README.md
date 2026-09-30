@@ -14,12 +14,12 @@ The deeper issue: the founder evaluates CVs against the job spec, but **the spec
 
 ## 2. Product flow
 
-1. Founder signs in (password gate).
+1. The founder opens the site. It goes straight to the **Dashboard** (`/` → `/dashboard`); there is no login (see §17a).
 2. **Upload Candidate**: choose the applied role (PM / SPM), drop one or more CVs (PDF, DOCX, TXT).
-3. Pipeline (progress streamed live): Reading CV → Separating candidate details → Evaluating PM criteria → Evaluating SPM criteria → Calculating scores → Preparing interview information → Preparing communication → Done.
+3. Pipeline (progress streamed live): Reading CV → Separating personal details → Evaluating Product Manager evidence → Evaluating Senior Product Manager evidence → Calculating scores → Preparing interview brief → Preparing email draft. If a step fails, the page names it and offers **Retry Scoring**; the CV is never re-uploaded.
 4. **Dashboard**: PM and SPM ranked lists (each ranks only applicants for that role, by that role's score). The top 5 are marked *Shortlist recommended*, which is a recommendation only.
 5. **Candidate detail**: both scores, every criterion with raw score, weight, weighted points, CV evidence and reasoning; cross-role view; interview brief; email draft.
-6. Founder decides (Undecided / Interview / Reject / Maybe-Hold), optionally overrides the shortlist, edits the email and clicks **Confirm & Send**. A confirmation dialog shows exactly who will receive it.
+6. Founder decides (**Interview / Hold / Reject**, no default), optionally overrides the shortlist. The matching email appears only after a decision, marked *DRAFT — NOT SENT*; the founder edits it and clicks **Confirm & Send**, then **Send Email** in a confirmation dialog that shows exactly who receives it. Hold needs no email.
 7. Resend delivers (to the test inbox in TEST MODE). The event, provider message id and timestamp are stored.
 
 ## 3. Calibration vs runtime evaluation
@@ -111,7 +111,6 @@ Code map:
 | `lib/pipeline/process.ts` | Stage orchestration, status updates, resumable retries |
 | `lib/db/repo.ts` | All database access (server-only, service role) |
 | `app/api/candidates/[id]/send` | **The only code path that can send an email** (enforced by a test) |
-| `proxy.ts`, `lib/auth/*` | Password gate + signed httpOnly session cookie |
 
 ## 5. Tech stack
 
@@ -204,7 +203,6 @@ See `.env.example`.
 | `RESEND_API_KEY` | Resend API key |
 | `RESEND_FROM_EMAIL` | Sender. `onboarding@resend.dev` works without a domain but only delivers to your Resend account email |
 | `RESEND_TEST_EMAIL` | TEST MODE inbox. Keep it set for demos |
-| `ADMIN_PASSWORD` | Founder password for the dashboard |
 | `COMPANY_NAME`, `SENDER_NAME`, `SENDER_TITLE` | Optional email signature |
 
 `.env` and `.env.local` are gitignored. So is `calibration-data/` (historical hire files).
@@ -241,10 +239,28 @@ npm run check     # lint + typecheck + tests + production build
 - `tests/scoring.test.ts`: weighted-score maths, totals, ties, shortlist, strongest/gap, rubric weight validation, evidence grounding.
 - `tests/parse.test.ts`: real PDF/DOCX/TXT extraction; scanned/empty/corrupt/unsupported files; identity separation.
 - `tests/ai.test.ts`: evaluation schema rejects missing/extra criteria and bad scores; weights applied in code; retry with validation feedback and fallback model; typed failures; runtime prompt contains only rubric and CV; candidate emails cannot leak scores or rankings.
-- `tests/security.test.ts`: session tokens, TEST MODE routing, only the send route calls Resend, log scrubbing, no historical names in source.
+- `tests/security.test.ts`: TEST MODE routing, only the send route calls Resend, log scrubbing, no historical names in source.
 - `tests/migration.test.ts`: runs the real migration in PGlite, covering the 100% weight check, single ACTIVE rubric, versioned scores, per-role ranking with ties, audit trail on re-evaluation, duplicate-send guard, RLS on every table.
 
 End-to-end acceptance (live Supabase + Gemini + Resend) is described in `docs/ACCEPTANCE.md`.
+
+## 17a. Access model (demo)
+
+For the assignment demo the site is intentionally **open: no login**, so an evaluator can use it without credentials. Secrets are still server-only (Supabase service key, Gemini and Resend keys never reach the browser, verified by scanning the production bundle).
+
+Consequences to be aware of: anyone with the URL can view candidates (including their contact details), record decisions, send emails and run calibration. TEST MODE (`RESEND_TEST_EMAIL`) keeps every email in the test inbox, and the demo uses invented candidates with `@example.com` addresses. For real use, put the app behind authentication (e.g. Vercel Deployment Protection or an auth provider) before loading real CVs.
+
+## Routes
+
+| Route | Purpose |
+|---|---|
+| `/` | Redirects to `/dashboard` |
+| `/dashboard` | PM / SPM ranked lists (`?role=SPM`) |
+| `/upload` | Upload + live analysis |
+| `/candidates/[id]` | Summary → why ranked here → brief → decision → email |
+| `/rubric` | How candidates are evaluated (plain language) |
+| `/calibration` | Rubric setup, draft review/approval, versions (admin, linked from the rubric page) |
+| `/activity` | Founder-facing history with All / Uploads / Decisions / Emails filters |
 
 ## 17. Human decision boundary
 

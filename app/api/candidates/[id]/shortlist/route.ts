@@ -1,14 +1,11 @@
 // Founder override of the shortlist recommendation (IN / OUT), or null to follow the recommendation again.
 import { z } from 'zod';
-import { requireApiSession } from '@/lib/auth/guard';
 import * as repo from '@/lib/db/repo';
 import { handle, jsonError, readBody } from '@/lib/http';
 
 const Body = z.object({ override: z.enum(['IN', 'OUT']).nullable() });
 
 export const POST = handle('shortlist.override', async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
-  const denied = await requireApiSession();
-  if (denied) return denied;
   const { id } = await params;
   const body = await readBody(request, Body);
   if ('error' in body) return body.error;

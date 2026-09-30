@@ -105,6 +105,16 @@ describe('interview brief + email output validation (TEST 10, 11, 24)', () => {
     const leaky = { ...ok, invite: { ...ok.invite, body: ok.invite.body.replace('stood out.', 'is the kind of Operational Immersion we value.') } };
     expect(outputsSchemaFor(['Operational Immersion']).safeParse(leaky).success).toBe(false);
     expect(outputsSchemaFor(['Operational Immersion']).safeParse(ok).success).toBe(true);
+    const hyphen = { ...ok, invite: { ...ok.invite, body: ok.invite.body.replace('stood out.', 'showed practical, scrappy problem-solving.') } };
+    expect(outputsSchemaFor(['Scrappy Problem Solving']).safeParse(hyphen).success).toBe(false);
+  });
+  it('rejections may not give reasons or compare with other candidates', () => {
+    const why = { ...ok, rejection: { ...ok.rejection, body: ok.rejection.body.replace('We have decided', 'We have chosen other candidates whose experience more closely aligns, so we have decided') } };
+    expect(outputsSchema.safeParse(why).success).toBe(false);
+  });
+  it('requires paragraphs, not one block of text', () => {
+    const flat = { ...ok, invite: { ...ok.invite, body: ok.invite.body.replace(/\n+/g, ' ') } };
+    expect(outputsSchema.safeParse(flat).success).toBe(false);
   });
   it('allows real achievements with percentages', () => {
     expect(outputsSchema.safeParse({ ...ok, invite: { ...ok.invite, body: ok.invite.body.replace('stood out.', 'stood out, as did cutting mis-picks by 18%.') } }).success).toBe(true);

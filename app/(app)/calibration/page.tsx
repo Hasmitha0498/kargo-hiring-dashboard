@@ -1,8 +1,10 @@
-import { formatDate } from '@/lib/format';
+import Link from 'next/link';
 import { Badge } from '@/components/badges';
+import { RubricView } from '@/components/RubricEditor';
 import { AddHireForm, GenerateRubric, JdEditor, RemoveHire } from '@/components/CalibrationPanel';
 import * as repo from '@/lib/db/repo';
 import { OUTCOME_LABEL } from '@/lib/domain';
+import { formatDate } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,12 +24,15 @@ export default async function CalibrationPage() {
   return (
     <div className="space-y-5">
       <div>
-        <div className="flex items-center gap-2">
-          <h1 className="text-xl font-semibold text-navy-900">Calibration</h1>
-          <Badge color="navy">Admin only</Badge>
+        <Link href="/rubric" className="text-sm text-slate-500 hover:text-navy-900">
+          ← How candidates are evaluated
+        </Link>
+        <div className="mt-2 flex items-center gap-2">
+          <h1 className="text-2xl font-semibold text-navy-900">Rubric setup</h1>
+          <Badge>Admin</Badge>
         </div>
         <p className="max-w-3xl text-sm text-slate-500">
-          Past hires and their performance outcomes are used once, on request, to find what distinguished the strongest hires and turn it into PM and SPM rubrics. They are never shown to, compared with, or sent alongside new candidates. New uploads and hiring decisions never change the rubric automatically.
+          Not needed day to day. Past hires and their performance outcomes are used once, on request, to find what distinguished the strongest hires and turn it into PM and SPM rubrics. A generated rubric is a draft until you approve it. New uploads and hiring decisions never change the rubric automatically, and past hires are never compared with new candidates.
         </p>
       </div>
 
@@ -44,6 +49,37 @@ export default async function CalibrationPage() {
         </div>
         <GenerateRubric hasActive={Boolean(active)} ready={ready} hireCount={hires.length} />
       </section>
+
+      {rubrics
+        .filter((r) => r.status === 'DRAFT')
+        .map((r) => (
+          <div key={r.id} className="space-y-2">
+            <h2 className="section-title">Draft awaiting your review</h2>
+            <RubricView
+              rubric={{ id: r.id, name: r.name, version: r.version, status: r.status, created_at: r.created_at, approved_at: r.approved_at, calibration_model: r.calibration_model, patterns: r.calibration_patterns }}
+              criteria={r.criteria}
+              activeVersion={active?.version ?? null}
+            />
+          </div>
+        ))}
+
+      {rubrics.some((r) => r.status !== 'DRAFT') && (
+        <details className="space-y-3">
+          <summary className="section-title cursor-pointer">Approved versions ({rubrics.filter((r) => r.status !== 'DRAFT').length}): edit by creating a new version</summary>
+          <div className="mt-3 space-y-3">
+            {rubrics
+              .filter((r) => r.status !== 'DRAFT')
+              .map((r) => (
+                <RubricView
+                  key={r.id}
+                  rubric={{ id: r.id, name: r.name, version: r.version, status: r.status, created_at: r.created_at, approved_at: r.approved_at, calibration_model: r.calibration_model, patterns: r.calibration_patterns }}
+                  criteria={r.criteria}
+                  activeVersion={active?.version ?? null}
+                />
+              ))}
+          </div>
+        </details>
+      )}
 
       <section className="card overflow-x-auto">
         <div className="border-b border-line px-4 py-2.5 text-sm font-semibold text-navy-900">Historical hires ({hires.length})</div>

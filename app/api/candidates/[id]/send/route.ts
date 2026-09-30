@@ -1,7 +1,6 @@
 // CONFIRM & SEND. The only place an email can leave the system. Requires: a founder decision of Interview or Reject,
 // a draft of the matching type, explicit confirmation, and no email already sending/sent for this candidate.
 import { z } from 'zod';
-import { requireApiSession } from '@/lib/auth/guard';
 import * as repo from '@/lib/db/repo';
 import { emailTypeForDecision } from '@/lib/domain';
 import { env } from '@/lib/env';
@@ -23,8 +22,6 @@ const Body = z.object({
 const STALE_SENDING_MS = 10 * 60_000;
 
 export const POST = handle('email.send', async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
-  const denied = await requireApiSession();
-  if (denied) return denied;
   const { id } = await params;
   const parsed = await readBody(request, Body);
   if ('error' in parsed) return jsonError('Sending needs explicit confirmation from the Confirm & Send dialog.');

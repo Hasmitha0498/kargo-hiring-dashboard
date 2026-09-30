@@ -1,10 +1,7 @@
-import { requireApiSession } from '@/lib/auth/guard';
 import * as repo from '@/lib/db/repo';
 import { handle, jsonError } from '@/lib/http';
 
 export const DELETE = handle('rubric.delete_draft', async (_request: Request, { params }: { params: Promise<{ id: string }> }) => {
-  const denied = await requireApiSession();
-  if (denied) return denied;
   const { id } = await params;
   const rubric = await repo.getRubric(id);
   if (!rubric) return jsonError('Rubric not found.', 404);

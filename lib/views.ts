@@ -8,6 +8,7 @@ import { suggestedActionFor } from './pipeline/process';
 export interface CandidateListItem {
   id: string;
   name: string;
+  fileName: string;
   appliedRole: Role;
   status: repo.CandidateRow['processing_status'];
   errorMessage: string | null;
@@ -51,6 +52,7 @@ export async function candidateList(): Promise<CandidateListItem[]> {
     return {
       id: c.id,
       name: displayName(privates.find((p) => p.candidate_id === c.id), c.original_file_name),
+      fileName: c.original_file_name,
       appliedRole: c.applied_role,
       status: c.processing_status,
       errorMessage: c.error_message,
@@ -118,7 +120,7 @@ export async function candidateDetail(id: string) {
   };
   const applied = roleScores.find((r) => r.role === candidate.applied_role);
   const rank = applied?.rank ?? null;
-  const applicants = list.filter((c) => c.applied_role === candidate.applied_role).length;
+  const applicants = list.filter((c) => c.applied_role === candidate.applied_role && c.processing_status !== 'PARSE_FAILED').length;
   return {
     candidate,
     priv,

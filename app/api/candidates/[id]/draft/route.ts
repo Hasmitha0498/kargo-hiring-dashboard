@@ -1,6 +1,5 @@
 // Save the founder's edits to the email draft. Saving never sends.
 import { z } from 'zod';
-import { requireApiSession } from '@/lib/auth/guard';
 import * as repo from '@/lib/db/repo';
 import { handle, jsonError, readBody } from '@/lib/http';
 
@@ -12,8 +11,6 @@ const Body = z.object({
 });
 
 export const PUT = handle('draft.save', async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
-  const denied = await requireApiSession();
-  if (denied) return denied;
   const { id } = await params;
   const body = await readBody(request, Body);
   if ('error' in body) return body.error;

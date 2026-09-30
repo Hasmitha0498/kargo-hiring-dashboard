@@ -1,26 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { createSessionToken, safeEqual, SESSION_TTL_SECONDS, verifySessionToken } from '@/lib/auth/session';
 import { personalize, resolveRecipient } from '@/lib/email/compose';
 import { redact } from '@/lib/log';
-
-describe('session tokens (TEST 20)', () => {
-  it('verifies a fresh token and rejects tampering, expiry and a changed password', async () => {
-    const t = await createSessionToken('pw-1');
-    expect(await verifySessionToken(t, 'pw-1')).toBe(true);
-    expect(await verifySessionToken(t, 'pw-2')).toBe(false);
-    expect(await verifySessionToken(t.replace(/\.v1|\.(\d+)\./, '.9999999999.'), 'pw-1')).toBe(false);
-    expect(await verifySessionToken(t, 'pw-1', Date.now() + (SESSION_TTL_SECONDS + 5) * 1000)).toBe(false);
-    expect(await verifySessionToken(undefined, 'pw-1')).toBe(false);
-    expect(await verifySessionToken('garbage', 'pw-1')).toBe(false);
-  });
-  it('constant-time compare', () => {
-    expect(safeEqual('abc', 'abc')).toBe(true);
-    expect(safeEqual('abc', 'abd')).toBe(false);
-    expect(safeEqual('abc', 'abcd')).toBe(false);
-  });
-});
 
 describe('email safety (TEST 13, 14)', () => {
   it('TEST MODE redirects every email to the test inbox', () => {

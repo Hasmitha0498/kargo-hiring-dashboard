@@ -32,7 +32,7 @@ export const DECISION_LABEL: Record<FounderDecision, string> = {
   UNDECIDED: 'Undecided',
   INTERVIEW: 'Interview',
   REJECT: 'Reject',
-  HOLD: 'Maybe / Hold',
+  HOLD: 'Hold',
 };
 export type EmailType = 'INTERVIEW_INVITE' | 'WARM_REJECTION';
 export const EMAIL_TYPE_LABEL: Record<EmailType, string> = { INTERVIEW_INVITE: 'Interview invite', WARM_REJECTION: 'Warm rejection' };

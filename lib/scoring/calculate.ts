@@ -71,3 +71,14 @@ export function competitionRank<T extends { total: number; createdAt: string }>(
     return { ...item, rank };
   });
 }
+
+/**
+ * Neutral description of how much rubric evidence the CV shows. Deliberately not a verdict ("good hire", "reject"):
+ * the founder decides.
+ */
+export function evidenceLevel(total: number | null | undefined): { label: string; tone: 'high' | 'moderate' | 'limited' } | null {
+  if (total === null || total === undefined) return null;
+  if (total >= 70) return { label: 'High rubric evidence', tone: 'high' };
+  if (total >= 45) return { label: 'Moderate rubric evidence', tone: 'moderate' };
+  return { label: 'Limited rubric evidence', tone: 'limited' };
+}

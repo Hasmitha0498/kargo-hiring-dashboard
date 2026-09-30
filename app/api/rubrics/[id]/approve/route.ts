@@ -1,7 +1,6 @@
 // Approve a DRAFT: it becomes ACTIVE and the previous ACTIVE version is archived. Existing candidate scores keep the
 // version they were scored with; nothing is re-scored automatically.
 import { z } from 'zod';
-import { requireApiSession } from '@/lib/auth/guard';
 import * as repo from '@/lib/db/repo';
 import { handle, jsonError, readBody } from '@/lib/http';
 import { checkRubric } from '@/lib/rubric/validate';
@@ -9,8 +8,6 @@ import { checkRubric } from '@/lib/rubric/validate';
 const Body = z.object({ confirmReplace: z.boolean().default(false) });
 
 export const POST = handle('rubric.approve', async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
-  const denied = await requireApiSession();
-  if (denied) return denied;
   const { id } = await params;
   const body = await readBody(request, Body);
   if ('error' in body) return body.error;

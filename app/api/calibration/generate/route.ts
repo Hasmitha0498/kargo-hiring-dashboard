@@ -3,7 +3,6 @@
 import { z } from 'zod';
 import { calibrateRubric, hireLabel } from '@/lib/ai/calibrate';
 import { defaultAiContext } from '@/lib/ai/default-context';
-import { requireApiSession } from '@/lib/auth/guard';
 import * as repo from '@/lib/db/repo';
 import { OUTCOME_LABEL, ROLES } from '@/lib/domain';
 import { handle, jsonError, readBody } from '@/lib/http';
@@ -15,8 +14,6 @@ export const maxDuration = 300;
 const Body = z.object({ confirm: z.literal(true) });
 
 export const POST = handle('calibration.generate', async (request: Request) => {
-  const denied = await requireApiSession();
-  if (denied) return denied;
   const body = await readBody(request, Body);
   if ('error' in body) return jsonError('Calibration must be confirmed explicitly.');
 
